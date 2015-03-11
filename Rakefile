@@ -23,8 +23,6 @@ task :setup do
     sh 'sed -i -e "s/= DEBUG/= RELEASE/g" edk2/Conf/target.txt'
     sh 'sed -i -e "s/= MYTOOLS/= GCC49/g" edk2/Conf/target.txt'
     
-	sh 'mkdir -p build'
-
 	# Setup emuration environment
     sh 'wget http://sourceforge.net/projects/edk2/files/OVMF/OVMF-X64-r15214.zip'
     sh 'unzip OVMF-X64-r15214.zip OVMF.fd'
@@ -34,7 +32,12 @@ task :setup do
 end
 
 task :build do
-    sh 'build', {chdir: 'edk2'}, {}
+	if !ENV.key?('WORKSPACE') || !ENV.key?('EDK_TOOLS_PATH') then
+		puts 'Error: Please execute "cd edk2 && . edksetup.sh"'
+		exit
+	end
+
+    sh 'BaseTools/BinWrappers/PosixLike/build', {chdir: 'edk2'}, {}
 	sh 'cp edk2/Build/AppPkg/RELEASE_GCC49/X64/AppPkg/Applications/Hello/Hello/OUTPUT/UefiOSLoader.efi bin/'
 end
 

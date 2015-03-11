@@ -18,6 +18,7 @@ Target: x64
 1. apt-get install git uuid-dev nasm gcc g++ python ruby rake qemu-system-x86-64
 1. git submodule update --init
 1. rake setup
+1. cd edk2 && . edksetup.sh && cd ..
 1. rake build
 
 gccのバージョンが4.9.x以外の場合は、実行前にRakefileの"GCC49"の部分をバージョンに合わせて書き換えてください。
@@ -26,6 +27,7 @@ gccのバージョンが4.9.x以外の場合は、実行前にRakefileの"GCC49"
 1. rake run
 
 ### Run Example
+1. cd edk2 && . edksetup.sh && cd ..
 1. rake example
 1. (起動したコンソールに入力) UefiOSloader
 1. ('A'が出力されれば成功)
