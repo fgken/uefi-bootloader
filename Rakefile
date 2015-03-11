@@ -38,6 +38,7 @@ task :build do
 	end
 
     sh 'BaseTools/BinWrappers/PosixLike/build', {chdir: 'edk2'}, {}
+	sh 'mkdir -p bin'
 	sh 'cp edk2/Build/AppPkg/RELEASE_GCC49/X64/AppPkg/Applications/Hello/Hello/OUTPUT/UefiOSLoader.efi bin/'
 end
 
