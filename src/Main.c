@@ -183,11 +183,16 @@ ShellAppMain (
   IN CHAR16 **Argv
   )
 {
-	EFI_STATUS		Status;
-	CHAR16			*FileName = L"fs0:\\out-serial-A.elf";
-	UINTN			FileSize;
-	UINT8			*FileData;
-	VOID			*EntryPoint = NULL;
+	EFI_STATUS				Status;
+	CHAR16					*FileName = L"fs0:\\out-serial-A.elf";
+	UINTN					FileSize;
+	UINT8					*FileData;
+	VOID					*EntryPoint = NULL;
+	UINTN					MemoryMapSize = 0;
+	EFI_MEMORY_DESCRIPTOR	*MemoryMap = NULL;
+	UINTN					MapKey;
+	UINTN					DescriptorSize;
+	UINT32					DescriptorVersion;
 
 	if(2 <= Argc){
 		FileName = Argv[1];
@@ -204,27 +209,31 @@ ShellAppMain (
 	CheckStatus(Status, return(-1));
 
 	// ExitBootServices
+	Status = gBS->GetMemoryMap(&MemoryMapSize, MemoryMap, &MapKey,
+						&DescriptorSize, &DescriptorVersion);
+	if (Status != EFI_BUFFER_TOO_SMALL){
+		CheckStatus(Status, return(-1));
+	}
+
+	MemoryMap = (EFI_MEMORY_DESCRIPTOR *)AllocateZeroPool(MemoryMapSize);
+	if (MemoryMap == NULL) {
+		Print(L"Error: AllocatePages failed\n");
+		return(-1);
+	}
+
+	Print(L"ExitBootServices and Execute the program\n");
+	
+	Status = gBS->GetMemoryMap(&MemoryMapSize, MemoryMap, &MapKey,
+						&DescriptorSize, &DescriptorVersion);
+	CheckStatus(Status, return(-1));
+
+	Status = gBS->ExitBootServices(gImageHandle, MapKey);
+	CheckStatus(Status, return(-1));
 	
 	// Jump to the entrypoint of executable
-	Print(L"Execute the program\n");
 	goto *EntryPoint;
-
-	Print(L"jump addres = %lx\n", *FileData);
-	Print(L"%x %x %x %x %x %x %x %x\n",
-			FileData[0], FileData[1], FileData[2], FileData[3], 
-			FileData[4], FileData[5], FileData[6], FileData[7]);
-
-	goto *(FileData);
 
 	// Unreachable!!!
 	return 0;
-
-//	{
-//		INTN ReturnValue = 0;
-//		Status = StartUefiAppByName(FileName, &ReturnValue);
-//		CheckStatus(Status, return(-1));
-//	}
-//
-//	return 0;
 }
 
