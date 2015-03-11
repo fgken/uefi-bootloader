@@ -1,0 +1,1 @@
+- Handle various elf format e.g. 32 and 64, endianness
