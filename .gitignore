@@ -29,3 +29,5 @@
 *.hex
 
 bin/
+OVMF.fd
+image/
