@@ -15,7 +15,8 @@ task :setup do
 
     sh 'make -C edk2/BaseTools'
 
-	sh '. edksetup.sh', {chdir: 'edk2'}, {}
+	sh "$SHELL edksetup.sh", {chdir: 'edk2'}, {}
+	# bash-like shell is needed ('/bin/sh' is not working)
 
     sh 'sed -i -e "s/= Nt32Pkg\/Nt32Pkg.dsc/= AppPkg\/AppPkg.dsc/g" edk2/Conf/target.txt'
     sh 'sed -i -e "s/= IA32/= X64/g" edk2/Conf/target.txt'
@@ -39,6 +40,11 @@ end
 
 task :run do
 	sh 'qemu-system-x86_64 -nographic -bios OVMF.fd -hda fat:image -net none'
+end
+
+task :example => [:setup, :build] do
+	sh './make.sh', {chdir: 'examples'}, {}
+	Rake::Task["run"].invoke()
 end
 
 task :clean do
