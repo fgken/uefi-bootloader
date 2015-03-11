@@ -51,6 +51,6 @@ task :example => [:setup, :build] do
 end
 
 task :clean do
-    sh 'rm -rf bin'
+    sh 'rm -rf bin/UefiOSLoader.efi'
 end
 
