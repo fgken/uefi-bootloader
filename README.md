@@ -26,10 +26,10 @@ gccのバージョンが4.9.x以外の場合は、実行前にRakefileの"GCC49"
 ## How to Run
 1. rake run
 
-### Run Example
+## Running Example
 1. cd edk2 && . edksetup.sh && cd ..
 1. rake example
-1. (起動したコンソールに入力) UefiOSloader
+1. (起動したコンソールに入力) UefiOSloader fs0:\out-serial-A.elf
 1. ('A'が出力されれば成功)
 1. Ctrl-a, xでqemuを終了
 
