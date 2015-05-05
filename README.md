@@ -1,8 +1,9 @@
-UEFI-OSLoader
+UEFI-BootLoader
 =============
 
 ## Overview
-UEFI環境で動くシンプルなOS/UEFIアプリ・ローダーです。
+UEFI環境で動くシンプルなブートローダーです。
+elf形式と生バイナリ形式のファイルをメモリ上にロードして実行できます。
 [EDKII](https://github.com/tianocore/edk2)を使って作成。
 UEFIの勉強を兼ねた最低限の実装です。
 コードの理解しやすさ重視で作っています。

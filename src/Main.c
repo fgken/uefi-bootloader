@@ -74,9 +74,16 @@ ElfLoadSegment (
 	UINT8		*ProgramHdr;
 	Elf64_Phdr	*ProgramHdrPtr;
 	UINTN		Index;
+	UINT8		IdentMagic[4] = {0x7f, 0x45, 0x4c, 0x46};
 
 	ElfHdr = (Elf64_Ehdr *)ElfImage;
 	ProgramHdr = (UINT8 *)ElfImage + ElfHdr->e_phoff;
+
+	for(Index=0; Index<4; Index++){
+		if(ElfHdr->e_ident[Index] != IdentMagic[Index]){
+			return EFI_INVALID_PARAMETER;
+		}
+	}
 
 	// Load every loadable ELF segment into memory
 	for(Index = 0; Index < ElfHdr->e_phnum; Index++){
@@ -175,6 +182,12 @@ StartUefiAppByName (
 	return(EFI_SUCCESS);
 }
 
+VOID 
+PrintUsage()
+{
+	Print(L"UefiBootLoader FILEPATH(elf/raw binary)\n");
+	Print(L"e.g. UefiBootLoader fs0:\\program.elf\n");
+}
 
 INTN
 EFIAPI
@@ -184,7 +197,7 @@ ShellAppMain (
   )
 {
 	EFI_STATUS				Status;
-	CHAR16					*FileName = L"fs0:\\out-serial-A.elf";
+	CHAR16					*FileName = L"";
 	UINTN					FileSize;
 	UINT8					*FileData;
 	VOID					*EntryPoint = NULL;
@@ -196,17 +209,30 @@ ShellAppMain (
 
 	if(2 <= Argc){
 		FileName = Argv[1];
+	} else {
+		Print(L"Error: too few arguments\n");
+		PrintUsage();
+		return -1;
 	}
 
-	// Load the ELF file to buffer
+	// Load the file to buffer
 	Print(L"Load the file = %s\n", FileName);
 	Status = LoadFileByName(FileName, &FileData, &FileSize);
 	CheckStatus(Status, return(-1));
 
 	// Load the program section(PT_LOAD) of the ELF executable into memory
-	Print(L"Load the program section of the ELF executable into memory\n");
 	Status = ElfLoadSegment(FileData, &EntryPoint);
-	CheckStatus(Status, return(-1));
+	if(!EFI_ERROR(Status)){
+		Print(L"Load the program section of the ELF executable into memory\n");
+	} else {
+		Print(L"Load the raw binary program into memory\n");
+		EntryPoint = (VOID *)0x7c00;
+		gBS->CopyMem(EntryPoint, FileData, FileSize);
+//		loop:
+//		jmp loop
+//		*((UINT8 *)EntryPoint) = 0xeb;
+//		*((UINT8 *)EntryPoint + 1) = 0xfe;
+	}
 
 	// ExitBootServices
 	Status = gBS->GetMemoryMap(&MemoryMapSize, MemoryMap, &MapKey,

@@ -1,10 +1,10 @@
 ## @file
-#  A simple OS loader
+#  A simple Boot loader
 ##
 
 [Defines]
   INF_VERSION                    = 0x00010006
-  BASE_NAME                      = UefiOSLoader
+  BASE_NAME                      = UefiBootLoader
   FILE_GUID                      = 10111117-a155-4fca-bb2c-5c7af56a4b73
   #FILE_GUID                      = a912f198-7f0e-4803-b908-b757b806ec83
   MODULE_TYPE                    = UEFI_APPLICATION
