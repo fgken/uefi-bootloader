@@ -28,7 +28,7 @@ task :setup do
     sh 'unzip OVMF-X64-r15214.zip OVMF.fd'
     sh 'rm OVMF-X64-r15214.zip'
     sh 'mkdir -p image/EFI/BOOT'
-    sh 'ln -sf ../../../bin/UefiOSLoader.efi image/EFI/BOOT/UefiOSLoader.efi'
+    sh 'ln -sf ../../../bin/UefiBootLoader.efi image/EFI/BOOT/UefiBootLoader.efi'
 end
 
 task :build do
@@ -39,7 +39,7 @@ task :build do
 
     sh 'BaseTools/BinWrappers/PosixLike/build', {chdir: 'edk2'}, {}
 	sh 'mkdir -p bin'
-	sh 'cp edk2/Build/AppPkg/RELEASE_GCC49/X64/AppPkg/Applications/Hello/Hello/OUTPUT/UefiOSLoader.efi bin/'
+	sh 'cp edk2/Build/AppPkg/RELEASE_GCC49/X64/AppPkg/Applications/Hello/Hello/OUTPUT/UefiBootLoader.efi bin/'
 end
 
 task :run do
@@ -52,6 +52,6 @@ task :example => [:setup, :build] do
 end
 
 task :clean do
-    sh 'rm -rf bin/UefiOSLoader.efi'
+    sh 'rm -rf bin/UefiBootLoader.efi'
 end
 
